@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FirebaseAuthApp</string>
+    <string name="existaccoutsignin"><u><i>Already have an account?Sign in</i></u></string>
+    <string name="notaccountregister"><u><i>Do not have account?Register</i></u></string>
+
+
+</resources>
