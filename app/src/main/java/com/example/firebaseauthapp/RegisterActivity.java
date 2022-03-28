@@ -4,9 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -22,13 +24,17 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG = "register";
     private EditText userEmailET,userPasswordET,userRetypePasswordET;
     private TextView haveaccountSignin;
     private Button registerButton;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
+    FirebaseUser currentUser;
 
 
     @Override
@@ -58,8 +64,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         registerButton=findViewById(R.id.button_register);
         progressBar=findViewById(R.id.progressBar);
+        Log.i(TAG, "onCreate: ");
 
         mAuth=FirebaseAuth.getInstance();
+
 
 
 
@@ -84,46 +92,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-
-        FirebaseUser currentUser=mAuth.getCurrentUser();
-        if (currentUser!=null){
-            startActivity(new Intent(this,MainActivity.class));
-            finish();
-        }
-
-
-
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
 
@@ -181,6 +150,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                 }else {
                     progressBar.setVisibility(View.VISIBLE);
+
                     mAuth.createUserWithEmailAndPassword(email,password)
                             .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                                 @Override
@@ -192,22 +162,28 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                         // Sign in success, update UI with the signed-in user's information
 
                                         FirebaseUser user = mAuth.getCurrentUser();
-                                        user.sendEmailVerification()
-                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if (task.isSuccessful()) {
-                                                            Toast.makeText(RegisterActivity.this, "You are Successfully Registered", Toast.LENGTH_SHORT).show();
-                                                            startActivity(new Intent(RegisterActivity.this,VerificationActivity.class));
-                                                            finish();
-                                                        }
-                                                        else {
-                                                            progressBar.setVisibility(View.GONE);
-                                                            Toast.makeText(RegisterActivity.this, ""+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 
+                                        if (user!=null){
+
+                                            user.sendEmailVerification()
+                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if (task.isSuccessful()) {
+                                                                Toast.makeText(RegisterActivity.this, "You are Successfully Registered", Toast.LENGTH_SHORT).show();
+                                                                startActivity(new Intent(RegisterActivity.this,VerificationActivity.class));
+                                                                finish();
+                                                            }
+                                                            else {
+                                                                progressBar.setVisibility(View.GONE);
+                                                                Toast.makeText(RegisterActivity.this, ""+ Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+
+                                                            }
                                                         }
-                                                    }
-                                                });
+                                                    });
+
+
+                                        }
 
 
 

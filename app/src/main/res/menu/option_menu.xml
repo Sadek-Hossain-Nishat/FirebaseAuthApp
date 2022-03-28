@@ -16,5 +16,12 @@
         app:showAsAction="never"/>
 
 
+    <item
+        android:id="@+id/deleteaccountdid"
+        android:icon="@drawable/ic_delete"
+        android:title="Delete Account"
+        app:showAsAction="never"/>
+
+
 
 </menu>

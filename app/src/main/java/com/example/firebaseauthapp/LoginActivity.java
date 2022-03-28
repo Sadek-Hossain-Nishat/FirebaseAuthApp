@@ -1,6 +1,7 @@
 package com.example.firebaseauthapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -8,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -25,11 +27,13 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG ="verify" ;
     private FirebaseAuth mAuth;
     private EditText loginEmailET, loginpasswordET;
     private Button signinButton;
-    private TextView notaccountcreateaccount;
+    private TextView notaccountcreateaccount,resetpasswordtext;
     private ProgressBar progressBar;
+
 
 
 
@@ -58,11 +62,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         signinButton = findViewById(R.id.button_signin);
         notaccountcreateaccount = findViewById(R.id.notaccountregister);
         progressBar = findViewById(R.id.progressBar);
-
+        resetpasswordtext=findViewById(R.id.resetpasswordid);
         mAuth = FirebaseAuth.getInstance();
 
         signinButton.setOnClickListener(this);
         notaccountcreateaccount.setOnClickListener(this);
+        resetpasswordtext.setOnClickListener(this);
 
 
     }
@@ -71,12 +76,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
+        FirebaseUser currentUser=mAuth.getCurrentUser();
         if (currentUser != null) {
-
-            startActivity(new Intent(this, MainActivity.class));
+            currentUser.reload();
+            if (currentUser.isEmailVerified()){
+                startActivity(new Intent(this, MainActivity.class));
+            }else {
+                startActivity(new Intent(this, VerificationActivity.class));
+            }
             finish();
+
+
         }
     }
 
@@ -95,78 +105,57 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+        private void signInUser(){
+
+            String email = loginEmailET.getText().toString();
+            String password = loginpasswordET.getText().toString();
+            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
 
 
-    private void signInUser() {
-
-        String email = loginEmailET.getText().toString();
-        String password = loginpasswordET.getText().toString();
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-
-
-            if (TextUtils.isEmpty(email)) {
-                loginEmailET.setError("Field must be Filled up");
-
-            }
-            if (TextUtils.isEmpty(password)) {
-                loginpasswordET.setError("Field must be Filled up");
-
-            }
-
-        }
-
-
-        if (password.length() < 6) {
-            loginpasswordET.setError("Password must be at least 6 characters");
-
-
-        } else {
-            progressBar.setVisibility(View.VISIBLE);
-            mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this,new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-
-                    if (task.isSuccessful()){
-                        progressBar.setVisibility(View.GONE);
-                        // Sign in success, update UI with the signed-in user's information
-                        Toast.makeText(LoginActivity.this, "You are Successfully Registered", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(LoginActivity.this,LoginActivity.class));
-                        finish();
-
-                    }else {
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(LoginActivity.this, ""+task.getException(), Toast.LENGTH_SHORT).show();
-
-                    }
-
-
+                if (TextUtils.isEmpty(email)) {
+                    loginEmailET.setError("Field must be Filled up");
 
                 }
-            });
+                if (TextUtils.isEmpty(password)) {
+                    loginpasswordET.setError("Field must be Filled up");
+
+                }
+
+            }
 
 
+            if (password.length() < 6) {
+                loginpasswordET.setError("Password must be at least 6 characters");
+
+
+            } else {
+                progressBar.setVisibility(View.VISIBLE);
+                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+
+                        if (task.isSuccessful()) {
+                            progressBar.setVisibility(View.GONE);
+                            // Sign in success, update UI with the signed-in user's information
+                            Toast.makeText(LoginActivity.this, "You are Successfully Registered", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(LoginActivity.this, LoginActivity.class));
+                            finish();
+
+                        } else {
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(LoginActivity.this, "" + task.getException(), Toast.LENGTH_SHORT).show();
+
+                        }
+
+
+                    }
+                });
+
+
+            }
         }
     }
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
