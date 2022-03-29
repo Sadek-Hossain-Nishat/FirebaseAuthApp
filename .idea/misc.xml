@@ -9,8 +9,9 @@
         <entry key="..\:/django application tutorial/Android Application project/AndroidProjects/WebXinfoTech/FirebaseAuthApp/app/src/main/res/drawable/background_registerbtn.xml" value="0.1" />
         <entry key="..\:/django application tutorial/Android Application project/AndroidProjects/WebXinfoTech/FirebaseAuthApp/app/src/main/res/drawable/ic_signin.xml" value="0.1" />
         <entry key="..\:/django application tutorial/Android Application project/AndroidProjects/WebXinfoTech/FirebaseAuthApp/app/src/main/res/drawable/ic_signouticon.xml" value="0.1" />
+        <entry key="..\:/django application tutorial/Android Application project/AndroidProjects/WebXinfoTech/FirebaseAuthApp/app/src/main/res/drawable/register_cursor_style.xml" value="0.1" />
         <entry key="..\:/django application tutorial/Android Application project/AndroidProjects/WebXinfoTech/FirebaseAuthApp/app/src/main/res/layout/activity_login.xml" value="0.22" />
-        <entry key="..\:/django application tutorial/Android Application project/AndroidProjects/WebXinfoTech/FirebaseAuthApp/app/src/main/res/layout/activity_register.xml" value="0.67" />
+        <entry key="..\:/django application tutorial/Android Application project/AndroidProjects/WebXinfoTech/FirebaseAuthApp/app/src/main/res/layout/activity_register.xml" value="0.25" />
         <entry key="..\:/django application tutorial/Android Application project/AndroidProjects/WebXinfoTech/FirebaseAuthApp/app/src/main/res/layout/activity_verification.xml" value="0.22" />
         <entry key="..\:/django application tutorial/Android Application project/AndroidProjects/WebXinfoTech/FirebaseAuthApp/app/src/main/res/menu/option_menu.xml" value="0.1" />
       </map>

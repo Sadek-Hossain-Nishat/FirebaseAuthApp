@@ -1,15 +1,20 @@
 package com.example.firebaseauthapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -95,10 +100,70 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changePassword() {
+        FirebaseUser currentUser=mAuth.getCurrentUser();
+        EditText newpasswordET=new EditText(this);
+        newpasswordET.requestFocus(); // to blink the cursor
+        newpasswordET.setHint("Enter your new password here");
+        newpasswordET.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        AlertDialog.Builder builder =new AlertDialog.Builder(this);
+        builder.setTitle("Change Password");
+        builder.setMessage("Do you want to change your password?\nPlease, enter your new password");
+        builder.setView(newpasswordET);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (TextUtils.isEmpty(newpasswordET.getText().toString())){
+                    Toast.makeText(MainActivity.this, "Empty field is not allowed for this operation", Toast.LENGTH_SHORT).show();
+
+                }
+                if ( newpasswordET.getText().toString().length()<6){
+                    Toast.makeText(MainActivity.this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+
+                }
+                else {
+
+                    if (currentUser!=null){
+
+
+                        currentUser.updatePassword(newpasswordET.getText().toString())
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()){
+                                            Toast.makeText(MainActivity.this, "Password has been changed successfully", Toast.LENGTH_SHORT).show();
+                                            mAuth.signOut();
+                                            startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                                            finish();
+                                        }
+                                        else {
+                                            Toast.makeText(MainActivity.this, ""+ Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    }
+                                });
+
+
+                    }
+
+                }
 
 
 
 
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+
+            }
+        });
+        builder.setCancelable(false);
+
+        builder.create().show();
 
 
 

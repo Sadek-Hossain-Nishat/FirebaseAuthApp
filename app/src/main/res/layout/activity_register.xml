@@ -16,6 +16,7 @@
         android:ems="10"
         android:hint="Enter your Password"
         android:inputType="textPassword"
+        android:textCursorDrawable="@drawable/register_cursor_style"
 
         android:paddingLeft="20dp"
         android:textColor="@color/white"
@@ -56,6 +57,7 @@
         android:background="@drawable/background_textfield_register"
         android:ems="10"
         android:foregroundTint="@color/white"
+        android:textCursorDrawable="@drawable/register_cursor_style"
         android:hint="Enter your Email"
         android:inputType="textEmailAddress"
         android:paddingLeft="20dp"
@@ -77,6 +79,7 @@
         android:ems="10"
         android:hint="Retype Password"
         android:inputType="textPassword"
+        android:textCursorDrawable="@drawable/register_cursor_style"
 
         android:paddingLeft="20dp"
         android:textColor="@color/white"

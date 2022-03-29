@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +27,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -101,11 +106,73 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(new Intent(this, RegisterActivity.class));
                 finish();
                 break;
+            case R.id.resetpasswordid:
+                resetPasswordEmail();
+                break;
         }
 
     }
 
-        private void signInUser(){
+    private void resetPasswordEmail() {
+        EditText resetpasswordemailET=new EditText(this);
+        resetpasswordemailET.requestFocus();
+
+        resetpasswordemailET.setHint("Enter your email here");
+        resetpasswordemailET.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle("Reset Password");
+        builder.setMessage("Do you want to reset your password?\nPlease, enter your email");
+        builder.setView(resetpasswordemailET);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (TextUtils.isEmpty(resetpasswordemailET.getText().toString()))
+                {
+                    Toast.makeText(LoginActivity.this, "Without email this operation is impossible", Toast.LENGTH_SHORT).show();
+
+                }
+                else {
+
+                    mAuth.sendPasswordResetEmail(resetpasswordemailET.getText().toString())
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        Toast.makeText(LoginActivity.this, "An Email has been sent to your mail\n to reset your password", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else {
+                                        Toast.makeText(LoginActivity.this, ""+ Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+                            });
+
+                }
+
+
+
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+
+            }
+        });
+        builder.setCancelable(false);
+        builder.create().show();
+
+
+
+
+
+
+
+    }
+
+    private void signInUser(){
 
             String email = loginEmailET.getText().toString();
             String password = loginpasswordET.getText().toString();
@@ -137,13 +204,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (task.isSuccessful()) {
                             progressBar.setVisibility(View.GONE);
                             // Sign in success, update UI with the signed-in user's information
-                            Toast.makeText(LoginActivity.this, "You are Successfully Registered", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "You are Successfully Signed in", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(LoginActivity.this, LoginActivity.class));
                             finish();
 
                         } else {
                             progressBar.setVisibility(View.GONE);
-                            Toast.makeText(LoginActivity.this, "" + task.getException(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "" + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
 
                         }
 
